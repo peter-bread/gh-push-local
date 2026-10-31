@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
+
 set -e
 
-echo "Hello gh-push-local!"
+# Push current local repo to github.
+
+REPO=$(git rev-parse --show-toplevel)
+
+# TODO: Enable users to configure private or public
+exec gh repo create "$(basename "$REPO")" --push --source "$REPO" --private
 
 # Snippets to help get started:
 
