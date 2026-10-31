@@ -37,13 +37,40 @@
 ################################################################################
 
 # TODO: Configure private or public (or internal?)
-# TODO: Configure owner (or organisation?)
-# TODO: Help/usage output
 
 ################################################################################
 
 set -e
 
+show_help() {
+  echo "Push current local repository to GitHub"
+  echo
+  echo "USAGE"
+  echo "  gh push-local <name> [<options>]"
+  echo
+  echo "OPTIONS"
+  echo "  --owner <owner>     Owner or organisation the repository should be created under"
+  echo "  -h, --help          Print this help message"
+}
+
+: "${OPT_OWNER:=}"
+
+while [ $# -gt 0 ]; do
+  case $1 in
+  --owner)
+    OPT_OWNER=$2
+    shift
+    ;;
+  -h | --help)
+    show_help
+    exit 0
+    ;;
+  esac
+  shift
+done
+
 REPO=$(git rev-parse --show-toplevel)
 
-exec gh repo create "$(basename "$REPO")" --push --source "$REPO" --private
+NAME=${OPT_OWNER:+$OPT_OWNER/}$(basename "$REPO")
+
+exec gh repo create "$NAME" --push --source "$REPO" --private
