@@ -55,6 +55,10 @@ show_help() {
   echo "  -h, --help            Print this help message"
 }
 
+flag() {
+  [[ $1 -eq 1 ]]
+}
+
 : "${OPT_OWNER:=}"
 : "${OPT_VISIBILITY:=private}"
 : "${OPT_DRY_RUN:=0}"
@@ -103,7 +107,7 @@ main() {
 
   echo "${CMD[@]}"
 
-  if [[ $OPT_DRY_RUN -eq 1 ]]; then
+  if flag "$OPT_DRY_RUN"; then
     exit
   fi
 
