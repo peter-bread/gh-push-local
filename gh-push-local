@@ -46,7 +46,7 @@ show_help() {
   echo "Push current local repository to GitHub"
   echo
   echo "USAGE"
-  echo "  gh push-local <name> [<options>]"
+  echo "  gh push-local [<options>]"
   echo
   echo "OPTIONS"
   echo "  --owner <owner>       Owner or organisation the repository should be created under"
