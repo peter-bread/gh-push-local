@@ -107,9 +107,8 @@ main() {
 
   echo "${CMD[@]}"
 
-  if flag "$OPT_DRY_RUN"; then
-    exit
-  fi
+  # If we are doing a dry run, exit before executing the command.
+  flag "$OPT_DRY_RUN" && exit
 
   exec "${CMD[@]}"
 }
