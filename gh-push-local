@@ -36,7 +36,7 @@
 
 ################################################################################
 
-# TODO: Configure private or public (or internal?)
+# TODO: Validate OPT_OWNER
 
 ################################################################################
 
@@ -49,11 +49,13 @@ show_help() {
   echo "  gh push-local <name> [<options>]"
   echo
   echo "OPTIONS"
-  echo "  --owner <owner>     Owner or organisation the repository should be created under"
-  echo "  -h, --help          Print this help message"
+  echo "  --owner <owner>       Owner or organisation the repository should be created under"
+  echo "  --visibility <value>  Repository visibility (allowed: private|public|internal) (default: private)"
+  echo "  -h, --help            Print this help message"
 }
 
 : "${OPT_OWNER:=}"
+: "${OPT_VISIBILITY:=private}"
 
 while [ $# -gt 0 ]; do
   case $1 in
@@ -61,16 +63,38 @@ while [ $# -gt 0 ]; do
     OPT_OWNER=$2
     shift
     ;;
+  --visibility)
+    OPT_VISIBILITY=$2
+    shift
+    ;;
   -h | --help)
     show_help
     exit 0
+    ;;
+  *)
+    echo "Invalid option: $1"
+    exit 1
     ;;
   esac
   shift
 done
 
-REPO=$(git rev-parse --show-toplevel)
+case $OPT_VISIBILITY in
+private | public | internal) ;;
+*)
+  echo "Invalid argument provided to --visibility: $OPT_VISIBILITY"
+  echo "Allowed values: public, private, internal"
+  exit 1
+  ;;
+esac
 
-NAME=${OPT_OWNER:+$OPT_OWNER/}$(basename "$REPO")
+main() {
+  REPO=$(git rev-parse --show-toplevel)
 
-exec gh repo create "$NAME" --push --source "$REPO" --private
+  NAME=${OPT_OWNER:+$OPT_OWNER/}$(basename "$REPO")
+  VISIBILITY="--$OPT_VISIBILITY"
+
+  exec gh repo create "$NAME" --push --source "$REPO" "$VISIBILITY"
+}
+
+main
